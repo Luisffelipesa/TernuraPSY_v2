@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <title>Login TernuraPSY</title>
+  <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/navbars/">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="cadastro.css"> 
+
+ 
+</head>
+
+
+<body>
+  <h1 class="espaccco">______________</h1>
+    <nav class="navbar navbar-expand navbar-dark bg-dark" aria-label="Second navbar example">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="index.html">TernuraPSY</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+    
+          <div class="collapse navbar-collapse" id="navbarsExample02">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="login.html">Login</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="cadastro.html">Cadastro Psicólogo</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="cadastroPaciente.html">Cadastro Paciente</a>
+                </li>
+              </ul>
+            <form role="search">
+              <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+            </form>
+          </div>
+        </div>
+      </nav>
+   <div class="container">
+    <h2>Login</h2>
+      <form id="formLogin">      
+      <div class="form-group">
+        <label for="email">E-mail:</label>
+        <input type="email" class="form-control" id="email" required>
+      </div>     
+      <div class="form-group">
+        <label for="senha">Senha:</label>
+        <input type="password" class="form-control" id="senha" required>
+      </div>     
+      <button type="submit" class="btn btn-primary">Entrar</button>
+    </form>
+  </div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+    
+    const firebaseConfig = {
+    apiKey: "AIzaSyDS3Zn3u5OkJrukyoRgf-B33nogklQrFag",
+    authDomain: "agencia-7cd11.firebaseapp.com",
+    projectId: "agencia-7cd11",
+    storageBucket: "agencia-7cd11.appspot.com",
+    messagingSenderId: "519531146537",
+    appId: "1:519531146537:web:6e6bcc186b15b07a81db38"
+  };
+  const app = initializeApp(firebaseConfig);
+
+  const auth = getAuth(app);
+
+  document.getElementById('formlogin').addEventListener('submit', function(event){
+    event.preventDefault();
+    
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('senha').value;
+    createUserWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    console.log("login bem sucedido:", userCredential)
+    window.location.href = 'PedraPapelTesoura.html';
+  
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+ 
+  });
+    
+
+  });
+  
+  </script>
+
+
+
+
+</body>
+
+</html>

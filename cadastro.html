@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro TernuraPSY</title>
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/navbars/">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link href="cadastro.css" rel="stylesheet">
+</head>
+
+<body>
+    <h1>Cadastro de novos Psicólogos</h1>
+    <nav class="navbar navbar-expand navbar-dark bg-dark" aria-label="Second navbar example">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">TernuraPSY</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample02"
+                aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarsExample02">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="login.html">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cadastro.html">Cadastro Psicólogo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cadastroPaciente.html">Cadastro Paciente</a>
+                    </li>
+                </ul>
+                <form role="search">
+                    <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+                </form>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <form id="formcadastro">
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" class="form-control" id="nome" required>
+            </div>
+            <div class="form-group">
+                <label for="senha">Senha:</label>
+                <input type="password" class="form-control" id="senha" required>
+            </div>
+            <div class="form-group">
+                <label for="email">E-mail:</label>
+                <input type="email" class="form-control" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="data">Data de nascimento:</label>
+                <input type="date" class="form-control" id="dataNascimento" required>
+            </div>
+            <div class="form-group">
+                <label for="crp">CRP:</label>
+                <input type="text" class="form-control" id="crp" required>
+                <small id="crpHelp" class="form-text text-muted">Digite um CRP válido (exemplo: 'CRP01/12345').</small>
+            </div>
+            <div class="form-group">
+                <label for="especialidade">Especialidade:</label>
+                <input type="text" class="form-control" id="especialidade" required>
+                <small id="crpHelp" class="form-text text-muted">Digite somente a principal.</small>
+            </div>
+            <div class="form-group">
+                <label for="abordagem">Abordagem:</label>
+                <input type="text" class="form-control" id="abordagem" required>
+                <small id="crpHelp" class="form-text text-muted">Digite somente a principal.</small>
+            </div>
+            <div class="foto">
+                <form method="post" action="cadastro.php" enctype="multipart/form-data">
+                    <input type="file" name="imagem" accept="image" id="foto">
+                </form>
+            </div>
+            <button type="submit" class="btn btn-primary" id="botao">Cadastrar</button>
+        </form>
+    </div>
+    
+    <script type="module">
+		import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+		import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+		import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+		const firebaseConfig = {
+			apiKey: "AIzaSyDS3Zn3u5OkJrukyoRgf-B33nogklQrFag",
+			authDomain: "agencia-7cd11.firebaseapp.com",
+			projectId: "agencia-7cd11",
+			storageBucket: "agencia-7cd11.appspot.com",
+			messagingSenderId: "519531146537",
+			appId: "1:519531146537:web:6e6bcc186b15b07a81db38"
+		};
+		const app = initializeApp(firebaseConfig);
+		const auth = getAuth();
+		const db = getFirestore(app);
+		const storage = getStorage();
+
+		document.getElementById('botao').addEventListener('click', async function (event) {
+    event.preventDefault();
+
+    const nome = document.getElementById('nome').value;
+    const dataNascimento = document.getElementById('dataNascimento').value;
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+    const foto = document.getElementById('foto').files[0];
+    const crp = document.getElementById('crp').value;
+    const especialidade = document.getElementById('especialidade').value; // Corrigido de 'atuacao' para 'especialidade'
+    const abordagem = document.getElementById('abordagem').value;
+
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+        const userId = userCredential.user.uid;
+        let fotoURL = '';
+        if (foto) {
+            const fotoRef = ref(storage, 'perfil/' + userId);
+            const uploadResult = await uploadBytes(fotoRef, foto);
+            fotoURL = await getDownloadURL(uploadResult.ref);
+        }
+        await setDoc(doc(db, 'usuarios', userId), {
+            nome,
+            dataNascimento,
+            email,
+            fotoURL,
+            crp,
+            especialidade,
+            abordagem
+        });
+        alert('Cadastro realizado com sucesso!')
+    } catch (error) {
+        console.error('Erro no cadastro:', error);
+        alert('Erro no cadastro:' + error.message);
+    }
+});
+	</script>
+</body>
+
+</html>
+</body>

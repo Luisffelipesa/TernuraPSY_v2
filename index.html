@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TernuraPSY</title>
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/navbars/">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="cadastro.css">
+</head>
+
+<body>
+    <h1>TernuraPSY</h1>
+    <nav class="navbar navbar-expand navbar-dark bg-dark" aria-label="Second navbar example">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">TernuraPSY</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample02"
+                aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarsExample02">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="login.html">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cadastro.html">Cadastro Psicólogo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cadastroPaciente.html">Cadastro Paciente</a>
+                    </li>
+                </ul>
+                <form role="search">
+                    <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+                </form>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h2>Usuários Cadastrados</h2>
+        <div id="usuariosContainer" class="row">
+        
+        </div>
+    </div>
+
+    
+    <script type="module">
+    
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js';
+        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js';
+
+        const firebaseConfig = {
+			apiKey: "AIzaSyDS3Zn3u5OkJrukyoRgf-B33nogklQrFag",
+			authDomain: "agencia-7cd11.firebaseapp.com",
+			projectId: "agencia-7cd11",
+			storageBucket: "agencia-7cd11.appspot.com",
+			messagingSenderId: "519531146537",
+			appId: "1:519531146537:web:6e6bcc186b15b07a81db38"
+		};
+
+      
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function carregarUsuarios() {
+            const querySnapshot = await getDocs(collection(db, "usuarios"));
+            const usuariosContainer = document.getElementById('usuariosContainer');
+            usuariosContainer.innerHTML = ''; 
+
+            querySnapshot.forEach((doc) => {
+                const usuario = doc.data();
+                const usuarioCard = `
+                    <div class="col-md-4">
+                        <div class="card">
+                            <img class="card-img-top" src="${usuario.fotoURL}" alt="Foto de perfil">
+                            <div class="card-body">
+                                <h5 class="card-title">${usuario.nome}</h5>
+                                <p class="card-text">CRP: ${usuario.crp}</p>
+                                <p class="card-text">Especialidade: ${usuario.especialidade}</p>
+                                <p class="card-text">Abordagem: ${usuario.abordagem}</p>
+                                <button class="btn btn-primary">WhatsApp</button>
+                            </div>
+
+                        </div>
+                    </div>
+                `;
+                usuariosContainer.innerHTML += usuarioCard;
+            });
+        }
+
+        carregarUsuarios();
+    </script>
+</body>
+
+</html>
